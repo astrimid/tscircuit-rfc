@@ -1,6 +1,3 @@
-Here is the Request for Comments (RFC) outlining the architecture, problem space, and proposed solution for the `circuit-atoms` library built on top of `tscircuit`.
-
-```markdown
 # RFC: circuit-atoms - A Declarative Semantic Layer for tscircuit
 
 **Status:** Proposed  
@@ -8,12 +5,12 @@ Here is the Request for Comments (RFC) outlining the architecture, problem space
 **Target Framework:** `@tscircuit/core`  
 **Tags:** Architecture, Domain-Driven Design, PCB Routing, DRC, Schema  
 
----
+
 
 ## Summary
 This RFC proposes the creation of `circuit-atoms`, a semantic, multi-domain abstraction library built on top of `@tscircuit/core`. It introduces a strict three-tier architecture (Atoms, Organisms, Subsystems) to decouple logical connectivity (schematic) from physical realization (PCB) and procurement (BOM). It solves the "RefDes Shifting" problem, enforces composition over configuration, and introduces mathematical Design Rule Checking (DRC) for hardware topologies.
 
----
+
 
 ## 1. Motivation and Problem Statement
 
@@ -33,7 +30,7 @@ When these are entangled, developers cannot change a filter's routing strategy w
 ### 1.3 Lack of Reusable, Verifiable Topologies
 A decoupling capacitor or an isolated gate-driver supply is not just a netlist—it is a physical topology with strict math (e.g., placement within $1.0mm$, isolated return paths, $\Delta V = I \cdot R$ voltage drop limits). Raw `tscircuit` provides primitives, but lacks semantic wrappers to enforce these engineering rules at compile time.
 
----
+
 
 ## 2. Discussion & Trade-offs
 
@@ -48,7 +45,7 @@ During the design phase, several approaches to composing complex ICs and their a
 
 Furthermore, we must address **naming stability**. To solve RefDes shifting, we propose a Deterministic Path-Based Hashing mechanism backed by a `schematic.lock.json` file. A local ID (`<capacitor id="in_cap" />`) resolves to an absolute path (`board.vcore.power_filter.in_cap`), which is securely mapped to a stable RefDes (`C102`) across incremental builds.
 
----
+
 
 ## 3. Proposed Solution: The 3-Tier Architecture
 
@@ -67,7 +64,6 @@ export const Decap = ({ name, target, to = "net.GND", value, pcbPlacement }) => 
     <capacitor name={`${name}_C`} capacitance={value} net1={target} net2={to} {...pcbPlacement} />
   </group>
 );
-
 ```
 
 ### Layer 2: Organisms (Topological Modules)
@@ -114,8 +110,6 @@ Layer 3 introduces declarative abstractions for system-level routing, such as Po
 
 ```
 
----
-
 ## 4. Implementation Strategy
 
 1. **Phase 1: Core Atoms & Lockfile mechanism**
@@ -133,13 +127,9 @@ Layer 3 introduces declarative abstractions for system-level routing, such as Po
 
 
 
----
-
 ## 5. Open Questions & Unresolved Issues
 
 1. **Selector Syntax:** `@tscircuit/core` is expanding its selector API. We need to ensure that querying pins by name (e.g., `.U1 > .VDD`) remains performant when deeply nested inside Organisms.
 2. **BOM Context Propagation:** Designing the Context Provider (`<BomProvider>`) to allow deep shallow-merging of component specs (e.g., overriding all `0402` capacitors to `0603` for a specific `<BuckChannel>` instance) without breaking TypeScript prop types.
 
-```
 
-```
