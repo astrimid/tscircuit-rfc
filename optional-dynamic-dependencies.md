@@ -2,7 +2,8 @@
 
 * **Status:** Proposed
 * **Target Package:** `@tscircuit/runframe`
-* **Authors:** Architecture Working Group (incorporating community feedback)
+
+Submitted: https://github.com/tscircuit/runframe/issues/4259
 
 ---
 
